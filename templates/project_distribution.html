@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2>Total Students per Course per Project (Current Intake)</h2>
+    <p><small>(Synthetic Data)</small></p>
+    
+    <div style="height: 500px;">
+        <canvas id="projectDistributionChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('projectDistributionChart').getContext('2d');
+    const chartData = {
+        labels: JSON.parse('{{ projects|tojson|safe }}'),
+        datasets: [{
+            label: 'Science',
+            data: JSON.parse('{{ science_counts|tojson|safe }}'),
+            backgroundColor: 'rgb(75, 192, 192)',
+            stack: 'Stack 0'
+        }, {
+            label: 'Engineering',
+            data: JSON.parse('{{ engineering_counts|tojson|safe }}'),
+            backgroundColor: 'rgb(54, 162, 235)',
+            stack: 'Stack 0'
+        }]
+    };
+    
+    const chartConfig = {
+        type: 'bar',
+        data: chartData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    stacked: true
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Student Distribution by Course and Project'
+                },
+                legend: {
+                    position: 'top'
+                }
+            }
+        }
+    };
+    
+    new Chart(ctx, chartConfig);
+});
+</script>
+{% endblock %} 
